@@ -10,9 +10,13 @@ def _get_repo(path: str) -> Repo:
     return _repo_cache[path]
 
 
-def pull(path: str, remote: str, refspec: str = None):
-    _get_repo(path).remote(remote).pull(refspec)
-
-
 def checkout(path: str, refspec: str):
     _get_repo(path).git.checkout(refspec)
+
+
+def fetch(path: str, remote: str, refspec: str = None):
+    _get_repo(path).remote(remote).fetch(refspec)
+
+
+def pull(path: str, remote: str, refspec: str = None):
+    _get_repo(path).remote(remote).pull(refspec)

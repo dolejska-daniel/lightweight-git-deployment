@@ -1,5 +1,5 @@
 import asyncio
-import logging
+import os
 import logging.config
 from importlib import import_module
 from types import ModuleType
@@ -13,6 +13,9 @@ log = logging.getLogger("deployer")
 
 
 async def main():
+    with open("config/logging.yaml", "r") as fd:
+        logging.config.dictConfig(yaml.safe_load(fd))
+
     http = Server()
 
     log.debug("loading HTTP plugins")
@@ -38,8 +41,21 @@ async def main():
 
 
 if __name__ == '__main__':
-    with open("config/logging.yaml", "r") as fd:
-        logging.config.dictConfig(yaml.safe_load(fd))
+    pid_filepath = "deployer.pid"
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    if os.path.exists(pid_filepath):
+        raise RuntimeError("PID file already exists, refusing to start!")
+
+    try:
+        with open(pid_filepath, "w") as fd:
+            fd.write(str(os.getpid()))
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(main())
+
+    except Exception:
+        log.exception("program encountered unrecoverable error, shutting down")
+
+    finally:
+        if os.path.exists(pid_filepath):
+            os.remove(pid_filepath)

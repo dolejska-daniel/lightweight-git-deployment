@@ -3,7 +3,7 @@ http:
     port: 8080
 
 bindings:
-    - conditions: []
+    - conditions:
         - action: push
           sender.login: dolejska-.*
           sender.id: 10078080
