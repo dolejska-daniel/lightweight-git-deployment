@@ -1,0 +1,15 @@
+http:
+    host: 0.0.0.0
+    port: 8080
+
+bindings:
+    - conditions: []
+        - action: push
+          sender.login: dolejska-.*
+          sender.id: 10078080
+        - sender.login: dolejska-.*
+          sender.id: 10078080
+      actions:
+        - call: "plugin.shell.command"
+          args:
+              - pwd
