@@ -7,7 +7,7 @@ from glob import glob
 
 import yaml
 
-from deployer.server import Server
+from deployer.http import Server
 
 log = logging.getLogger("deployer")
 

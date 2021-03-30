@@ -1,3 +1,4 @@
+import asyncio
 import re
 from dataclasses import dataclass, asdict
 from importlib import import_module
@@ -12,7 +13,7 @@ class EventBindingAction:
     args: Optional[list[Any]]
     kwargs: Optional[dict[str, Any]]
 
-    def run(self, variables: dict[str, Any]):
+    async def run(self, variables: dict[str, Any]):
         def prepare_arg(arg: Any) -> Any:
             if isinstance(arg, str) and arg.startswith("$"):
                 if arg.find(".") >= 0:
@@ -29,10 +30,15 @@ class EventBindingAction:
 
         module_name, method_name = self.call.rsplit(".", maxsplit=1)
         module = import_module(module_name)
-        getattr(module, method_name)(
-            *[prepare_arg(a) for a in self.args],
-            **{k: prepare_arg(v) for k, v in self.kwargs.items()},
-        )
+        method = getattr(module, method_name)
+        args = [prepare_arg(a) for a in self.args]
+        kwargs = {k: prepare_arg(v) for k, v in self.kwargs.items()}
+
+        if asyncio.iscoroutinefunction(method):
+            await method(*args, **kwargs)
+
+        else:
+            method(*args, **kwargs)
 
 
 @dataclass()
@@ -67,6 +73,6 @@ class EventBinding:
 
         return False
 
-    def run(self, variables: dict[str, Any]):
+    async def run(self, variables: dict[str, Any]):
         for action in self.actions:
-            action.run(variables)
+            await action.run(variables)

@@ -9,6 +9,6 @@ bindings:
 #        - sender.login: dolejska-.*
 #          sender.id: 10078080
       actions:
-        - call: "plugin.custom.print_function"
+        - call: "plugin.shell.command"
           args:
-              - SUXESFUL
+              - pwd
