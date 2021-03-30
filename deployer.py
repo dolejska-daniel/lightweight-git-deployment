@@ -1,8 +1,11 @@
 import asyncio
 import logging
+import logging.config
 from importlib import import_module
 from types import ModuleType
 from glob import glob
+
+import yaml
 
 from deployer.server import Server
 
@@ -35,5 +38,8 @@ async def main():
 
 
 if __name__ == '__main__':
+    with open("config/logging.yaml", "r") as fd:
+        logging.config.dictConfig(yaml.safe_load(fd))
+
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
