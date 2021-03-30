@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 @dataclass()
@@ -12,9 +12,9 @@ class GitHubHookConfig:
 
 @dataclass()
 class GitHubHookResponse:
-    code: int
+    code: Optional[int]
     status: str
-    message: str
+    message: Optional[str]
 
 
 @dataclass()

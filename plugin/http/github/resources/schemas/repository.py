@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from .user import GitHubUser
 
@@ -78,11 +79,11 @@ class GitHubRepository:
     has_wiki: bool
     has_pages: bool
     forks_count: int
-    mirror_url: str
+    mirror_url: Optional[str]
     archived: bool
     disabled: bool
     open_issues_count: int
-    license: GitHubRepositoryLicense
+    license: Optional[GitHubRepositoryLicense]
     forks: int
     open_issues: int
     watchers: int

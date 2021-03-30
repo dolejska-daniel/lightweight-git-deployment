@@ -7,6 +7,9 @@ dataclass_fields_cache = {}
 def dataclass_from_dict(dataclass_cls: Type[dataclass],
                         data: Mapping[str, Any]
                         ) -> dataclass:
+    if not data:
+        return None
+
     dataclass_data = {**data}
     cls_fields = {field.name: field for field in fields(dataclass_cls)}
     for field_name in cls_fields:
