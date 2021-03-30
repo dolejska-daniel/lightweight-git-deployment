@@ -6,7 +6,7 @@ from typing import List, Optional
 class GitHubHookConfig:
     content_type: str
     insecure_ssl: str
-    secret: str
+    secret: Optional[str]
     url: str
 
 
