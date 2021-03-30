@@ -19,7 +19,7 @@ event_classes = [
 ]
 
 
-@routes.get("/github")
+@routes.post("/github")
 async def github_webhook_handler(request: Request):
     if request.headers.get("Content-Type", "") == "application/json":
         data = dict(await request.json())
