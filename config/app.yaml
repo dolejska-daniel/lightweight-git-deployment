@@ -1,0 +1,14 @@
+http:
+    host: 0.0.0.0
+
+bindings:
+    - conditions: []
+#        - action: push
+#          sender.login: dolejska-.*
+#          sender.id: 10078080
+#        - sender.login: dolejska-.*
+#          sender.id: 10078080
+      actions:
+        - call: "plugin.custom.print_function"
+          args:
+              - SUXESFUL
