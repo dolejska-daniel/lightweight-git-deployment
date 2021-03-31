@@ -27,8 +27,10 @@ async def github_webhook_handler(request: Request):
     data_raw = await request.text()
     data = dict(json.loads(data_raw))
     if key := AppConfig.get("github.secret"):
-        digest = hmac.digest(str(key).encode(), data_raw.encode(), "sha256").hex()
-        if not hmac.compare_digest(digest, request.headers.get("X-Hub-Signature-256", "")):
+        digest_header_name = AppConfig.get("github.digest_header_name", "X-Hub-Signature-256")
+        digest_method, digest_received = request.headers.get(digest_header_name, "sha256=").split("=", maxsplit=1)
+        digest = hmac.digest(str(key).encode(), data_raw.encode(), digest_method).hex()
+        if not hmac.compare_digest(digest, digest_received):
             raise HTTPUnprocessableEntity(reason="Refusing to process data with invalid signature.")
 
     log.log(0, "received content=%s", data)

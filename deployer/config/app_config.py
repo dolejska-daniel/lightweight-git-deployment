@@ -20,6 +20,7 @@ class AppConfig(object):
 
         Optional("github"): Schema({
             Optional("secret"): str,
+            Optional("digest_header_name"): str,
         }),
 
         Optional("bindings"): Schema([Schema({

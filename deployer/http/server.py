@@ -30,14 +30,14 @@ class Server(object):
             return Response(text=json.dumps({
                 "status": exc.status_code,
                 "reason": exc.reason
-            }), headers={"Content-Type": "application/json"})
+            }), headers={"Content-Type": "application/json"}, status=exc.status_code)
 
         except Exception:
             log.exception("exception occured while processing API request")
             return Response(text=json.dumps({
                 "status": 500,
                 "reason": "Something went wrong. Check server log for more information",
-            }), headers={"Content-Type": "application/json"})
+            }), headers={"Content-Type": "application/json"}, status=500)
 
     # ==========================================================================dd==
     #   PUBLIC PROPERTIES
