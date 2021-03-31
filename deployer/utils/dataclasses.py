@@ -5,12 +5,12 @@ import logging
 
 log = logging.getLogger("deployer.utils.dataclasses")
 
-dataclass_fields_cache = {}
+dataclass_fields_cache: dict[type, dict[str, Field]] = {}
 
 
 def _get_dataclass_fields(dataclass_cls: Type[dataclass]) -> dict[str, Field]:
     if dataclass_cls not in dataclass_fields_cache:
-        dataclass_fields_cache[dataclass_cls] = {f.name for f in fields(dataclass_cls)}
+        dataclass_fields_cache[dataclass_cls] = {f.name: f for f in fields(dataclass_cls)}
 
     return dataclass_fields_cache[dataclass_cls]
 
