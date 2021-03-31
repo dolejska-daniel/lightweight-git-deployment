@@ -88,3 +88,5 @@ class GitHubRepository:
     open_issues: int
     watchers: int
     default_branch: str
+    stargazers: int
+    master_branch: str

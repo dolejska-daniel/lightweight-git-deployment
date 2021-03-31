@@ -16,7 +16,7 @@ log = logging.getLogger("plugin.http.github")
 event_classes = dataclass_list_by_module(events)
 
 
-@routes.get("/github")
+@routes.post("/github")
 async def github_webhook_handler(request: Request):
     if request.headers.get("Content-Type", "") == "application/json":
         data = dict(await request.json())
@@ -24,15 +24,17 @@ async def github_webhook_handler(request: Request):
     else:
         data = dict(await request.post())
 
+    log.log(0, "received content=%s", data)
     dataclass_cls = dataclass_select_class_by_dict(event_classes, data)
     if dataclass_cls is None:
-        log.warning("unable to find mapping for incomming message, content=%s", data)
+        log.error("unable to find mapping for incomming message, content_keys=%s", list(data.keys()))
         raise HTTPBadRequest(reason="Unable to select dataclass corresponding to provided data.")
 
     dataclass = dataclass_from_dict(dataclass_cls, data)
 
     variables = {
         "request": request,
+        "event_raw": data,
         "event": dataclass,
     }
 
@@ -40,7 +42,7 @@ async def github_webhook_handler(request: Request):
     for _id, binding_data in enumerate(bindings):
         binding: EventBinding = dataclass_from_dict(EventBinding, binding_data)
         if binding.matches(dataclass):
-            log.debug("binding %d matched, running actions", _id)
+            log.debug("binding %d matched, scheduling actions and continuing", _id)
             asyncio.create_task(binding.run(variables))
 
     return Response(

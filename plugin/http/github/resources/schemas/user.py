@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 @dataclass()
 class GitHubUser:
+    name: str
+    email: str
     login: str
     id: int
     node_id: str

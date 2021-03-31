@@ -11,6 +11,7 @@ class GitHubPushEvent(GitHubBaseEvent):
     after: str
     created: bool
     deleted: bool
+    forced: bool
     base_ref: str
     compare: str
     commits: list[GitHubCommit]
