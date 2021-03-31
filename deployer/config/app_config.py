@@ -18,6 +18,10 @@ class AppConfig(object):
             Optional("reuse_port"): bool,
         }),
 
+        Optional("github"): Schema({
+            Optional("secret"): str,
+        }),
+
         Optional("bindings"): Schema([Schema({
             Optional("conditions"): Schema([Schema({
                 Optional(object): Or(str, int, float, bool),

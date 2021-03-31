@@ -1,8 +1,10 @@
 import asyncio
+import json
 import logging
+import hmac
 
 from aiohttp.web import Request, Response
-from aiohttp.web_exceptions import HTTPAccepted, HTTPBadRequest
+from aiohttp.web_exceptions import HTTPAccepted, HTTPBadRequest, HTTPUnsupportedMediaType, HTTPUnprocessableEntity
 
 from deployer.config import AppConfig
 from deployer.utils import dataclass_from_dict, dataclass_select_class_by_dict, dataclass_list_by_module
@@ -18,11 +20,16 @@ event_classes = dataclass_list_by_module(events)
 
 @routes.post("/github")
 async def github_webhook_handler(request: Request):
-    if request.headers.get("Content-Type", "") == "application/json":
-        data = dict(await request.json())
+    if (content_type := request.headers.get("Content-Type", "")) != "application/json":
+        log.warning("received message with unsupported Content-Type=%s", content_type)
+        raise HTTPUnsupportedMediaType(reason="Unable to process data of unsupported Content-Type.")
 
-    else:
-        data = dict(await request.post())
+    data_raw = await request.text()
+    data = dict(json.loads(data_raw))
+    if key := AppConfig.get("github.secret"):
+        digest = hmac.digest(str(key).encode(), data_raw.encode(), "sha256").hex()
+        if not hmac.compare_digest(digest, request.headers.get("X-Hub-Signature-256", "")):
+            raise HTTPUnprocessableEntity(reason="Refusing to process data with invalid signature.")
 
     log.log(0, "received content=%s", data)
     dataclass_cls = dataclass_select_class_by_dict(event_classes, data)
