@@ -7,6 +7,7 @@ from aiohttp import web
 from deployer.config import AppConfig
 
 log = logging.getLogger("deployer.http.server")
+alog = logging.getLogger("deployer.http.server.access")
 
 
 class Server(object):
@@ -15,7 +16,7 @@ class Server(object):
     def __init__(self):
         self._app = web.Application(logger=log)
         self._app.middlewares.append(self.error_middleware)
-        self._runner = web.AppRunner(self._app, access_log=log, access_log_format='"%r" %s %b %Tf "%{User-Agent}i"')
+        self._runner = web.AppRunner(self._app, access_log=alog, access_log_format='"%r" %s %b %Tf "%{User-Agent}i"')
         self._site: Union[web.TCPSite, None] = None
 
     @classmethod
