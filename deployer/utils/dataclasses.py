@@ -1,4 +1,5 @@
 from dataclasses import dataclass, is_dataclass, fields, Field
+from types import ModuleType
 from typing import Any, Type, Mapping, Union
 
 dataclass_fields_cache = {}
@@ -39,3 +40,8 @@ def dataclass_select_class_by_dict(dataclasses: list[dataclass],
             return dataclass_cls
 
     return None
+
+
+def dataclass_list_by_module(module: ModuleType) -> list[dataclass]:
+    classes = [getattr(module, cls_name, None) for cls_name in dir(module)]
+    return list(filter(lambda cls: is_dataclass(cls), classes))

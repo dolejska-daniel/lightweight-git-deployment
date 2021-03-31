@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from .base import GitHubBaseEvent
-from .release import GitHubRelease
+from ..release import GitHubRelease
 
 
 @dataclass()

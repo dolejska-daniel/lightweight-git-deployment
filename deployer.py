@@ -47,8 +47,8 @@ if __name__ == '__main__':
         raise RuntimeError("PID file already exists, refusing to start!")
 
     try:
-        with open(pid_filepath, "w") as fd:
-            fd.write(str(os.getpid()))
+        with open(pid_filepath, "w") as _pid_fd:
+            _pid_fd.write(str(os.getpid()))
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(main())

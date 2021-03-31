@@ -5,24 +5,18 @@ from aiohttp.web import Request, Response
 from aiohttp.web_exceptions import HTTPAccepted, HTTPBadRequest
 
 from deployer.config import AppConfig
-from deployer.utils import dataclass_from_dict, dataclass_select_class_by_dict, get_key_recursive
+from deployer.utils import dataclass_from_dict, dataclass_select_class_by_dict, dataclass_list_by_module
 from deployer.utils.schemas import EventBinding
 
 from .routes import routes
-from .schemas.ping_event import GitHubPingEvent
-from .schemas.push_event import GitHubPushEvent
-from .schemas.release_event import GitHubReleaseEvent
+from .schemas import events
 
 log = logging.getLogger("plugin.http.github")
 
-event_classes = [
-    GitHubPingEvent,
-    GitHubPushEvent,
-    GitHubReleaseEvent,
-]
+event_classes = dataclass_list_by_module(events)
 
 
-@routes.post("/github")
+@routes.get("/github")
 async def github_webhook_handler(request: Request):
     if request.headers.get("Content-Type", "") == "application/json":
         data = dict(await request.json())

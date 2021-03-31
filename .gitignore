@@ -130,5 +130,7 @@ dmypy.json
 
 .idea
 
+*.pid
+
 config/*
 !config/*.dist.*

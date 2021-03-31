@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from .base import GitHubBaseEvent
-from .hook import GitHubHook
+from ..hook import GitHubHook
 
 
 @dataclass()
