@@ -52,7 +52,7 @@ def dataclass_select_class_by_dict(dataclasses: list[dataclass],
                                    ) -> Union[dataclass, None]:
     data_fields = set(data.keys())
     for dataclass_cls in dataclasses:
-        dataclass_fields = _get_dataclass_fields(dataclass_cls)
+        dataclass_fields = set(_get_dataclass_fields(dataclass_cls).keys())
         if data_fields.issubset(dataclass_fields):
             log.debug("provided data with fields %s matched %s", data_fields, dataclass_cls)
             return dataclass_cls
