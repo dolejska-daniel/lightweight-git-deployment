@@ -1,10 +1,13 @@
 import asyncio
+import logging
 import re
 from dataclasses import dataclass, asdict
 from importlib import import_module
 from typing import Optional, Any, overload, Mapping
 
-from .. import get_key_recursive
+from ..itertools import get_key_recursive
+
+log = logging.getLogger("deployer.utils.schemas.event_binding")
 
 
 @dataclass()
@@ -63,6 +66,8 @@ class EventBinding:
                         return False
 
                 except Exception:
+                    log.exception("exception occured while trying to match %s with %s, field %s",
+                                  condition_value, locals().get("field_value", None), condition_field)
                     return False
 
             return True

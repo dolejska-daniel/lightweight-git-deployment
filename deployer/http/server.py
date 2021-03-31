@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Union
 
@@ -13,8 +14,29 @@ class Server(object):
 
     def __init__(self):
         self._app = web.Application(logger=log)
+        self._app.middlewares.append(self.error_middleware)
         self._runner = web.AppRunner(self._app, access_log=log, access_log_format='"%r" %s %b %Tf "%{User-Agent}i"')
         self._site: Union[web.TCPSite, None] = None
+
+    @classmethod
+    @web.middleware
+    async def error_middleware(cls, request, handler):
+        from aiohttp.web_response import Response
+        try:
+            return await handler(request)
+
+        except web.HTTPException as exc:
+            return Response(text=json.dumps({
+                "status": exc.status_code,
+                "reason": exc.reason
+            }), headers={"Content-Type": "application/json"})
+
+        except Exception:
+            log.exception("exception occured while processing API request")
+            return Response(text=json.dumps({
+                "status": 500,
+                "reason": "Something went wrong. Check server log for more information",
+            }), headers={"Content-Type": "application/json"})
 
     # ==========================================================================dd==
     #   PUBLIC PROPERTIES
