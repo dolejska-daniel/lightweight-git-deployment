@@ -64,7 +64,10 @@ class EventBinding:
                     if field_value != condition_value \
                             and (not isinstance(condition_value, str)
                                  or re.match(condition_value, field_value) is None):
+                        log.debug("field %s=%s failed to match %s", condition_field, field_value, condition_value)
                         return False
+
+                    log.debug("field %s=%s matched %s", condition_field, field_value, condition_value)
 
                 except Exception:
                     log.exception("exception occured while trying to match %s with %s, field %s",
@@ -75,10 +78,13 @@ class EventBinding:
 
         for subconditions in self.conditions:
             if conditions_and(subconditions):
+                log.debug("all subconditions matched!")
                 return True
 
         return False
 
     async def run(self, variables: dict[str, Any]):
         for action in self.actions:
-            await action.run(variables)
+            log.debug("running action %s, variables=%s", action, variables)
+            action_result = await action.run(variables)
+            log.debug("action %s finished, result=%s", action, action_result)

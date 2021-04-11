@@ -10,6 +10,7 @@ async def command(cmd: str):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE
     )
+    log.debug(proc)
     stdout, stderr = await proc.communicate()
 
     log.debug(stdout.decode().strip())
