@@ -62,7 +62,8 @@ class EventBinding:
                 try:
                     field_value = get_key_recursive(event, condition_field, ".")
                     if field_value != condition_value \
-                            and re.match(condition_value, field_value) is None:
+                            and (not isinstance(condition_value, str)
+                                 or re.match(condition_value, field_value) is None):
                         return False
 
                 except Exception:
